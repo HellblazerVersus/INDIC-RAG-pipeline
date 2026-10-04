@@ -1,1 +1,1 @@
-"""Test suite for voice-rag-hhgoa."""
+"""Test suite for personal-voice-rag."""

@@ -1,6 +1,6 @@
-# Voice-Enabled Indic RAG Pipeline (`voice-rag-hhgoa`)
+# Voice-Enabled Indic RAG Pipeline (`personal-voice-rag`)
 
-> **HH Goa 2026 — Task #2 Technical Submission**  
+> **Personal Voice RAG Project**  
 > A production-grade, voice-enabled Retrieval-Augmented Generation (RAG) system engineered for Indic languages (default: Hindi `hi` on `ai4bharat/MSMARCO-XI`), featuring **Live Voice Command execution** (CLI microphone capture & Web Audio browser recording), pluggable STT (Sarvam AI & ElevenLabs with zero-overhead faster-whisper fallback), 6 vast chunking strategies, in-process FAISS vector retrieval (<200ms SLA budget), 4-tier composite guardrails, resilient error recovery harness, live FastAPI web application, and latency analytics.
 
 ---
@@ -48,8 +48,8 @@ To achieve state-of-the-art retrieval accuracy for Indic languages without sacri
                                         ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │ 1. Speech-to-Text (STT) Stage                                                   │
-│    • Sarvam AI (saaras:v2 - primary Indic ASR)                                  │
-│    • ElevenLabs (scribe_v2 - multilingual ASR)                                  │
+│    • ElevenLabs (scribe_v2 - primary robust ASR)                                │
+│    • Sarvam AI (saaras:v2 - secondary Indic ASR)                                │
 │    • faster-whisper (CTranslate2 int8 local fallback)                           │
 │    • MockTranscriber (deterministic testing & synthetic validation)             │
 └───────────────────────────────────────┬─────────────────────────────────────────┘
@@ -105,7 +105,7 @@ To achieve state-of-the-art retrieval accuracy for Indic languages without sacri
 | Requirement | Implementation Details | Status |
 | :--- | :--- | :---: |
 | **1. Live Voice Command** | First-class live microphone recording via **CLI** (`./run.sh --live` with configurable duration and VAD auto-stop) and **Web UI** (browser Web Audio API 16kHz PCM WAV recorder with live pulse visualizer). | **✓ Complete** |
-| **2. Speech-to-Text** | Integrates **Sarvam AI** (`saaras:v2`) as primary Indic voice transcriber, **ElevenLabs** (`scribe_v2`) as secondary, with automatic fallback to **`faster-whisper`** (CTranslate2 int8) and deterministic mock for testing. | **✓ Complete** |
+| **2. Speech-to-Text** | Integrates **ElevenLabs** (`scribe_v2`) as primary robust voice transcriber, **Sarvam AI** (`saaras:v2`) as secondary, with automatic fallback to **`faster-whisper`** (CTranslate2 int8) and deterministic mock for testing. | **✓ Complete** |
 | **3. Vast Chunking Strategies** | **6 distinct chunking strategies**: `FixedWindowChunker`, `SentenceBoundaryChunker` (Devanagari danda aware), `SemanticChunker` (character n-gram Jaccard), `RecursiveChunker` (hierarchical separators), `MetadataAwareChunker` (provenance context), and `HybridChunker` (multi-strategy dedup). | **✓ Complete** |
 | **4. Latency Target (<200ms)** | Strict latency accounting isolating the **Retrieval Leg (Embedding + FAISS + Guardrails)** from LLM generation. P50: **0.08 ms**, P70: **0.18 ms**, P90: **47.15 ms**, P100: **< 200 ms** (CUDA/warm). | **✓ Complete** |
 | **5. Latency Analytics** | Measured across **90 test runs** over **18 diverse queries** (in-domain Hindi/English, out-of-domain, safety-testing) reporting P50, P70, P90, P100, Mean, and StdDev per stage. | **✓ Complete** |
@@ -250,7 +250,7 @@ Measured across **90 timed evaluations** across **18 diverse benchmark queries**
 ## 8. Project Structure
 
 ```
-voice-rag-hhgoa/
+personal-voice-rag/
 ├── Dockerfile                          # Production container specification
 ├── pyproject.toml                      # Dependencies & package metadata
 ├── setup.sh                            # Automated stack environment setup script
@@ -311,7 +311,7 @@ voice-rag-hhgoa/
 ---
 
 ## 9. License & Acknowledgements
-Developed for **HH Goa 2026 — Task #2**.  
+Developed for **Personal Project**.  
 Dataset: **AI4Bharat MSMARCO-XI** (`ai4bharat/MSMARCO-XI`).  
 Models: **Sarvam AI** / **ElevenLabs** / **intfloat/multilingual-e5-small** / **faster-whisper**.
 

@@ -1,7 +1,7 @@
 [project]
-name = "voice-rag-hhgoa"
+name = "personal-voice-rag"
 version = "0.2.0"
-description = "Voice-Enabled RAG core scaffold for Indic languages (HH Goa 2026, Task #2)"
+description = "Voice-Enabled RAG core scaffold for Indic languages (Personal Project)"
 readme = "README.md"
 requires-python = ">=3.11, <3.13"
 dependencies = [
@@ -31,6 +31,7 @@ dependencies = [
     "nvidia-cudnn-cu12>=9.0.0",
     "nvidia-cublas-cu12>=12.0.0",
     "nvidia-cuda-nvrtc-cu12>=12.0.0",
+    "rank-bm25>=0.2.2",
 ]
 
 [build-system]

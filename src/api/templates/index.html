@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS RAG Platform (Personal Project)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --sidebar-bg: #111827;
+            --sidebar-text: #9ca3af;
+            --sidebar-active: #ffffff;
+            --sidebar-active-bg: #1f2937;
+            --surface: #ffffff;
+            --border: #e5e7eb;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 24px; font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #374151; }
+        .sidebar-header i { color: var(--primary); }
+        .nav-links { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .nav-item { padding: 12px 24px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; font-weight: 500; text-decoration: none; color: var(--sidebar-text); }
+        .nav-item:hover, .nav-item.active { background-color: var(--sidebar-active-bg); color: var(--sidebar-active); }
+        .nav-item.active { border-left: 4px solid var(--primary); padding-left: 20px; }
+        
+        /* Main Layout */
+        .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .topbar { height: 70px; background-color: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: var(--shadow-sm); z-index: 10; }
+        .topbar-title { font-size: 1.25rem; font-weight: 600; }
+        .topbar-actions { display: flex; align-items: center; gap: 20px; }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .avatar { width: 36px; height: 36px; background-color: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        
+        /* Content Area */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 400px; gap: 24px; padding: 24px 32px; height: calc(100vh - 70px); overflow-y: auto; }
+        
+        /* Panel Styles */
+        .panel { background-color: var(--surface); border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; justify-content: space-between; background-color: #f8fafc; }
+        .panel-body { padding: 20px; flex: 1; overflow-y: auto; }
+        
+        /* Query Builder Form */
+        .tabs { display: flex; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 500; color: var(--text-muted); transition: all 0.2s; font-size: 0.9rem; }
+        .tab.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-sm); }
+        .tab-content-panel { display: none; }
+        .tab-content-panel.active { display: block; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        textarea, select, input[type="file"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; outline: none; }
+        textarea:focus, select:focus { border-color: var(--primary); outline: 2px solid rgba(79, 70, 229, 0.2); }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; font-size: 0.95rem; }
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background-color: #f9fafb; }
+        
+        /* Chat History / Output */
+        .chat-container { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 24px; display: none; }
+        .query-bubble { background: #f3f4f6; padding: 16px; border-radius: 12px 12px 12px 0; margin-bottom: 16px; border-left: 4px solid var(--text-muted); }
+        .answer-bubble { background: #eff6ff; padding: 16px; border-radius: 12px 12px 0 12px; border-left: 4px solid var(--primary); line-height: 1.6; }
+        
+        /* Live Voice */
+        .voice-recorder { text-align: center; padding: 40px 20px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; margin-bottom: 20px; transition: all 0.3s; }
+        .voice-recorder.recording { border-color: var(--danger); background: #fef2f2; }
+        .mic-btn { width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: #fff; border: none; font-size: 2rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); transition: all 0.2s; margin-bottom: 16px; }
+        .mic-btn.recording { background: var(--danger); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
+        /* Pipeline Explanation UI (Right Sidebar) */
+        .pipeline-stage { margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .stage-header { padding: 12px 16px; background: #f8fafc; font-weight: 600; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid transparent; }
+        .stage-header.success { border-left: 4px solid var(--success); }
+        .stage-header.warning { border-left: 4px solid var(--warning); }
+        .stage-header.danger { border-left: 4px solid var(--danger); }
+        .stage-body { padding: 16px; font-size: 0.85rem; display: none; background: #fff; border-top: 1px solid var(--border); }
+        .stage-body.open { display: block; }
+        
+        .metric-badge { padding: 4px 8px; background: #e0e7ff; color: var(--primary); border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .meta-item { background: #f1f5f9; padding: 8px; border-radius: 6px; }
+        .meta-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+        .meta-value { font-weight: 600; color: var(--text-main); }
+        
+        .chunk-list { display: flex; flex-direction: column; gap: 8px; }
+        .chunk-item { border: 1px solid var(--border); padding: 8px; border-radius: 6px; background: #fafafa; }
+        .chunk-score { font-family: monospace; color: var(--primary); font-weight: 600; margin-bottom: 4px; display: inline-block; }
+        .chunk-text { color: var(--text-muted); font-size: 0.8rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .loader { display: none; text-align: center; padding: 20px; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-layer-group"></i> RAG Builder
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-item"><i class="fa-solid fa-house"></i> Overview</a>
+            <a href="#" class="nav-item active"><i class="fa-solid fa-wand-magic-sparkles"></i> Playgrounds</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-database"></i> Vector Stores</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Guardrails</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-title">RAG Pipeline Explorer</div>
+            <div class="topbar-actions">
+                <span class="badge" style="background:#e0e7ff; color:#4f46e5; padding:6px 12px; border-radius:20px; font-size:0.85rem; font-weight:600;"><i class="fa-solid fa-bolt"></i> MSMARCO-XI Index Active</span>
+                <div class="user-profile">
+                    <div class="avatar">V</div>
+                    <span>Versus</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left: Query Execution Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span><i class="fa-regular fa-comment-dots"></i> Pipeline Input</span>
+                    <select id="langSelect" style="width:auto; padding:4px 8px; border: 1px solid var(--border); border-radius: 6px;">
+                        <option value="hi" selected>Hindi (हिन्दी)</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="panel-body">
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchInputTab('text')">Text Query</div>
+                        <div class="tab" onclick="switchInputTab('voice')">Live Voice</div>
+                        <div class="tab" onclick="switchInputTab('file')">Audio File</div>
+                    </div>
+
+                    <!-- Text Input -->
+                    <div id="textTab" class="tab-content-panel active">
+                        <div class="form-group">
+                            <label>Enter Search Query</label>
+                            <textarea id="textInput" rows="4" placeholder="e.g. भारत की राजधानी क्या है?"></textarea>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+                            <span class="badge" style="cursor:pointer; background:#f1f5f9; padding:4px 10px; border-radius:12px; font-size:0.75rem;" onclick="document.getElementById('textInput').value='भारत की राजधानी क्या है?'">Capital of India</span>
+                            <span class="badge" style="cursor:pointer; background:#f1f5f9; padding:4px 10px; border-radius:12px; font-size:0.75rem;" onclick="document.getElementById('textInput').value='सौर ऊर्जा के क्या लाभ हैं?'">Solar Energy</span>
+                            <span class="badge" style="cursor:pointer; background:#f1f5f9; padding:4px 10px; border-radius:12px; font-size:0.75rem;" onclick="document.getElementById('textInput').value='कंप्यूटर का जनक किसे माना जाता है?'">Father of Computers</span>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%" onclick="submitTextQuery()">Execute Pipeline <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                    <!-- Live Voice Input -->
+                    <div id="voiceTab" class="tab-content-panel">
+                        <div class="voice-recorder" id="voiceRecorder">
+                            <button class="mic-btn" id="micBtn" onclick="toggleVoice()">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                            <h3 style="margin-bottom:8px;" id="voiceStatus">Click to speak</h3>
+                            <p style="color:var(--text-muted); font-size:0.9rem;" id="voiceTimer">Records up to 15 seconds</p>
+                        </div>
+                    </div>
+
+                    <!-- Audio File Input -->
+                    <div id="fileTab" class="tab-content-panel">
+                        <div class="form-group">
+                            <label>Upload Audio File</label>
+                            <input type="file" id="audioFile" accept="audio/*">
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Supported formats: WAV, MP3, M4A.</p>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%" onclick="submitFileQuery()">Upload & Execute <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+
+                    <div id="loader" class="loader">
+                        <div class="spinner"></div>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">Processing pipeline...</p>
+                    </div>
+
+                    <div id="chatOutput" class="chat-container">
+                        <div class="query-bubble" id="resQuery"><strong>User:</strong> <span>...</span></div>
+                        <div class="answer-bubble" id="resAnswer"><strong>Agent:</strong> <span>...</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Pipeline Explanation / Insights -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span><i class="fa-solid fa-microscope"></i> Pipeline Insights</span>
+                    <span class="metric-badge" id="totalLatency" style="display:none;">200ms</span>
+                </div>
+                <div class="panel-body" id="pipelineInsights">
+                    <div style="text-align:center; padding:40px 20px; color:var(--text-muted);">
+                        <i class="fa-solid fa-diagram-project" style="font-size:3rem; margin-bottom:16px; opacity:0.5;"></i>
+                        <p>Execute a query to see real-time pipeline execution, chunk retrieval, and latency analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchInputTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content-panel').forEach(t => t.classList.remove('active'));
+            
+            if(tab === 'text') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('textTab').classList.add('active');
+            } else if (tab === 'voice') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('voiceTab').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab')[2].classList.add('active');
+                document.getElementById('fileTab').classList.add('active');
+            }
+        }
+
+        function toggleStage(element) {
+            const body = element.nextElementSibling;
+            body.classList.toggle('open');
+            const icon = element.querySelector('.fa-chevron-down');
+            if(body.classList.contains('open')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Live Voice Recording Logic
+        let isRecording = false;
+        let audioContext = null;
+        let mediaStream = null;
+        let scriptProcessor = null;
+        let audioBuffers = [];
+        let recordStartTime = 0;
+        let timerInterval = null;
+
+        async function toggleVoice() {
+            if(!isRecording) {
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } });
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+                    if (audioContext.state === 'suspended') await audioContext.resume();
+                    
+                    const source = audioContext.createMediaStreamSource(mediaStream);
+                    audioBuffers = [];
+                    scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+                    scriptProcessor.onaudioprocess = (e) => {
+                        if (!isRecording) return;
+                        audioBuffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+                    };
+                    
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.value = 0;
+                    source.connect(scriptProcessor);
+                    scriptProcessor.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    isRecording = true;
+                    recordStartTime = Date.now();
+                    
+                    document.getElementById('micBtn').classList.add('recording');
+                    document.getElementById('micBtn').innerHTML = '<i class="fa-solid fa-stop"></i>';
+                    document.getElementById('voiceRecorder').classList.add('recording');
+                    document.getElementById('voiceStatus').textContent = 'Listening...';
+                    
+                    timerInterval = setInterval(() => {
+                        const elapsed = ((Date.now() - recordStartTime) / 1000).toFixed(1);
+                        document.getElementById('voiceTimer').textContent = `${elapsed}s / 15.0s`;
+                        if (elapsed >= 15.0) stopRecordingAndSubmit();
+                    }, 100);
+                } catch(e) {
+                    alert("Mic access error. Please grant permissions.");
+                }
+            } else {
+                stopRecordingAndSubmit();
+            }
+        }
+
+        async function stopRecordingAndSubmit() {
+            if (!isRecording) return;
+            isRecording = false;
+            clearInterval(timerInterval);
+            
+            document.getElementById('micBtn').classList.remove('recording');
+            document.getElementById('micBtn').innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            document.getElementById('voiceRecorder').classList.remove('recording');
+            document.getElementById('voiceStatus').textContent = 'Processing Audio...';
+            
+            if (scriptProcessor) scriptProcessor.disconnect();
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            if (audioContext && audioContext.state !== 'closed') audioContext.close();
+
+            let totalLength = audioBuffers.reduce((acc, buf) => acc + buf.length, 0);
+            if (totalLength === 0) return;
+
+            let merged = new Float32Array(totalLength);
+            let offset = 0;
+            for (let b of audioBuffers) { merged.set(b, offset); offset += b.length; }
+            
+            const buffer = new ArrayBuffer(44 + merged.length * 2);
+            const view = new DataView(buffer);
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + merged.length * 2, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, 16000, true);
+            view.setUint32(28, 16000 * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, merged.length * 2, true);
+            
+            let p = 44;
+            for (let i = 0; i < merged.length; i++) {
+                let s = Math.max(-1, Math.min(1, merged[i]));
+                view.setInt16(p, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                p += 2;
+            }
+            
+            function writeString(v, offset, str) {
+                for (let i = 0; i < str.length; i++) v.setUint8(offset + i, str.charCodeAt(i));
+            }
+
+            const blob = new Blob([view], { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('file', blob, 'live_voice.wav');
+            formData.append('language', document.getElementById('langSelect').value);
+            
+            document.getElementById('voiceStatus').textContent = 'Click to speak';
+            document.getElementById('voiceTimer').textContent = 'Records up to 15 seconds';
+            
+            executePipeline('/api/query/voice', { method: 'POST', body: formData });
+        }
+
+        async function submitTextQuery() {
+            const query = document.getElementById('textInput').value;
+            const lang = document.getElementById('langSelect').value;
+            if(!query) return;
+            executePipeline('/api/query/text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query, language: lang })
+            });
+        }
+
+        async function submitFileQuery() {
+            const fileInput = document.getElementById('audioFile');
+            if(fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('language', document.getElementById('langSelect').value);
+            executePipeline('/api/query/voice', { method: 'POST', body: formData });
+        }
+
+        async function executePipeline(url, fetchOptions) {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('chatOutput').style.display = 'none';
+            document.getElementById('pipelineInsights').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><div class="spinner"></div>Building pipeline trace...</div>';
+            
+            try {
+                const res = await fetch(url, fetchOptions);
+                const data = await res.json();
+                
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('chatOutput').style.display = 'block';
+                document.getElementById('resQuery').querySelector('span').textContent = data.query || "Audio input";
+                document.getElementById('resAnswer').querySelector('span').textContent = data.answer;
+                
+                if(data.is_refusal) {
+                    document.getElementById('resAnswer').style.borderLeftColor = 'var(--danger)';
+                    document.getElementById('resAnswer').style.background = '#fef2f2';
+                } else {
+                    document.getElementById('resAnswer').style.borderLeftColor = 'var(--primary)';
+                    document.getElementById('resAnswer').style.background = '#eff6ff';
+                }
+
+                renderInsights(data);
+            } catch(e) {
+                document.getElementById('loader').style.display = 'none';
+                alert("Error executing pipeline.");
+            }
+        }
+
+        function renderInsights(data) {
+            const totalMs = data.latency_breakdown ? 
+                (data.latency_breakdown.stt_ms + data.latency_breakdown.embed_ms + data.latency_breakdown.retrieve_ms + data.latency_breakdown.guardrail_ms + data.latency_breakdown.gen_ms).toFixed(1) : 0;
+            
+            document.getElementById('totalLatency').textContent = totalMs + 'ms Total';
+            document.getElementById('totalLatency').style.display = 'inline-block';
+
+            let html = '';
+            
+            // STT Stage
+            if(data.latency_breakdown && data.latency_breakdown.stt_ms > 0) {
+                html += `
+                <div class="pipeline-stage">
+                    <div class="stage-header success" onclick="toggleStage(this)">
+                        <span><i class="fa-solid fa-microphone-lines"></i> 1. Speech-to-Text</span>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span class="metric-badge">${data.latency_breakdown.stt_ms.toFixed(1)}ms</span>
+                            <i class="fa-solid fa-chevron-down" style="transition:0.2s;"></i>
+                        </div>
+                    </div>
+                    <div class="stage-body">
+                        <div class="meta-grid">
+                            <div class="meta-item"><div class="meta-label">Provider</div><div class="meta-value">Primary Model</div></div>
+                            <div class="meta-item"><div class="meta-label">Transcribed Text</div><div class="meta-value" style="font-style:italic;">"${data.query}"</div></div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Retrieval Stage
+            const retrievalMs = data.latency_breakdown ? (data.latency_breakdown.embed_ms + data.latency_breakdown.retrieve_ms).toFixed(1) : 0;
+            let chunksHtml = '';
+            if(data.retrieved_passages && data.retrieved_passages.length > 0) {
+                chunksHtml = '<div class="chunk-list">';
+                data.retrieved_passages.forEach((p, i) => {
+                    chunksHtml += `
+                    <div class="chunk-item">
+                        <span class="chunk-score"><i class="fa-solid fa-bullseye"></i> ${(p.score*100).toFixed(1)}% Match</span>
+                        <div class="chunk-text">${p.text}</div>
+                        <div style="margin-top:4px; font-size:0.7rem; color:#9ca3af;">ID: ${p.doc_id}</div>
+                    </div>`;
+                });
+                chunksHtml += '</div>';
+            } else {
+                chunksHtml = '<p style="color:var(--text-muted); font-size:0.8rem;">No chunks retrieved.</p>';
+            }
+
+            html += `
+            <div class="pipeline-stage">
+                <div class="stage-header success" onclick="toggleStage(this)">
+                    <span><i class="fa-solid fa-database"></i> 2. Vector Retrieval</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span class="metric-badge">${retrievalMs}ms</span>
+                        <i class="fa-solid fa-chevron-down" style="transition:0.2s;"></i>
+                    </div>
+                </div>
+                <div class="stage-body">
+                    <div class="meta-grid">
+                        <div class="meta-item"><div class="meta-label">Embed Time</div><div class="meta-value">${data.latency_breakdown ? data.latency_breakdown.embed_ms.toFixed(1) : 0}ms</div></div>
+                        <div class="meta-item"><div class="meta-label">FAISS Search Time</div><div class="meta-value">${data.latency_breakdown ? data.latency_breakdown.retrieve_ms.toFixed(1) : 0}ms</div></div>
+                    </div>
+                    <h4 style="margin:10px 0 8px; font-size:0.8rem; text-transform:uppercase; color:var(--text-muted);">Top Retrieved Chunks</h4>
+                    ${chunksHtml}
+                </div>
+            </div>`;
+
+            // Guardrails Stage
+            const guardStatus = data.is_refusal ? 'danger' : 'success';
+            const guardIcon = data.is_refusal ? 'fa-shield-virus' : 'fa-shield-check';
+            html += `
+            <div class="pipeline-stage">
+                <div class="stage-header ${guardStatus}" onclick="toggleStage(this)">
+                    <span><i class="fa-solid ${guardIcon}"></i> 3. Policy Guardrails</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span class="metric-badge">${data.latency_breakdown ? data.latency_breakdown.guardrail_ms.toFixed(1) : 0}ms</span>
+                        <i class="fa-solid fa-chevron-down" style="transition:0.2s;"></i>
+                    </div>
+                </div>
+                <div class="stage-body">
+                    <div class="meta-grid">
+                        <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value" style="color:var(--${guardStatus})">${data.is_refusal ? 'Triggered Refusal' : 'Passed All Checks'}</div></div>
+                        <div class="meta-item"><div class="meta-label">Confidence Score</div><div class="meta-value">${data.confidence_score !== null ? data.confidence_score.toFixed(3) : 'N/A'}</div></div>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted);">Checked Input Safety, Off-topic relevance, and Retrieval Confidence threshold.</p>
+                </div>
+            </div>`;
+
+            // Generation Stage
+            html += `
+            <div class="pipeline-stage">
+                <div class="stage-header success" onclick="toggleStage(this)">
+                    <span><i class="fa-solid fa-microchip"></i> 4. LLM Generation</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span class="metric-badge">${data.latency_breakdown ? data.latency_breakdown.gen_ms.toFixed(1) : 0}ms</span>
+                        <i class="fa-solid fa-chevron-down" style="transition:0.2s;"></i>
+                    </div>
+                </div>
+                <div class="stage-body">
+                    <p style="font-size:0.8rem; color:var(--text-muted);">Context-augmented prompt executed on LLM backend to generate grounded response.</p>
+                </div>
+            </div>`;
+
+            document.getElementById('pipelineInsights').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

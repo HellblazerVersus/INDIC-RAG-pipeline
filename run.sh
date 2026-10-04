@@ -54,7 +54,7 @@ EXTRA_ARGS=()
 
 show_usage() {
     echo "================================================================="
-    echo "Voice-Enabled Indic RAG — Runner Script (HH Goa Task #2)"
+    echo "Voice-Enabled Indic RAG — Runner Script (Personal Project Personal Project)"
     echo "================================================================="
     echo "Usage: ./run.sh [MODE / OPTIONS]"
     echo ""

@@ -6,7 +6,7 @@ cd "$PROJECT_ROOT"
 
 echo "================================================================="
 echo "  Voice-Enabled Indic RAG — Environment & Stack Setup"
-echo "  (HH Goa 2026, Task #2)"
+echo "  (Personal Project)"
 echo "================================================================="
 echo "==> Project Root: $PROJECT_ROOT"
 
