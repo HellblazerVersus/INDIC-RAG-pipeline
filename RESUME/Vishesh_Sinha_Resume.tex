@@ -1,0 +1,168 @@
+%-------------------------
+% Resume in LaTeX (single page, Jake's-resume style)
+%-------------------------
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Margins
+\addtolength{\oddsidemargin}{-0.6in}
+\addtolength{\evensidemargin}{-0.6in}
+\addtolength{\textwidth}{1.2in}
+\addtolength{\topmargin}{-0.8in}
+\addtolength{\textheight}{1.55in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{\vspace{-5pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule\vspace{-5pt}]
+
+\pdfgentounicode=1
+
+% Custom commands
+\newcommand{\resumeItem}[1]{\item\small{#1\vspace{-2pt}}}
+
+\newcommand{\resumeSubheading}[3]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #2} \\
+      \textit{\small #3} & \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l}
+      \textbf{#1} \\
+      \textit{\small #2} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.12in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.18in, itemsep=0pt, topsep=1pt, parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-3pt}}
+
+%-------------------------------------------
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+  \textbf{\Huge \scshape Vishesh Sinha} \\ \vspace{2pt}
+  \small +91 9079886147 $|$
+  \href{mailto:versus.ai.1234@gmail.com}{\underline{versus.ai.1234@gmail.com}} $|$
+  \href{https://www.linkedin.com/in/vishesh-sinha-ab029832a/}{\underline{linkedin.com/in/vishesh-sinha}} $|$
+  \href{https://github.com/HellblazerVersus}{\underline{github.com/HellblazerVersus}}
+\end{center}
+\vspace{-12pt}
+
+%----------SUMMARY----------
+\section{Summary}
+{\small\justifying
+Curious AI builder who keeps asking what comes next: how agents will plan and use tools, how small local models can do the work of cloud ones, and how we can measure and trust what a model tells us. I learn by turning ideas and research into working systems, such as agentic LLM workflows, retrieval pipelines for Indic languages and local-first AI that runs on everyday laptops, and then testing them honestly. I have worked on a Hospital ERP module at STPI and built the full backend of a fintech app as a freelancer. I want to work on agentic AI, information retrieval and trustworthy machine learning, where there is always something new to figure out.\par}
+\vspace{-3pt}
+
+%----------EDUCATION----------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Poornima Institute of Engineering and Technology}{2024 -- 2028}
+    {B.Tech in Artificial Intelligence \& Data Science $|$ Current SGPA: 8.8 / 10}
+\resumeSubHeadingListEnd
+\vspace{-9pt}
+
+%----------EXPERIENCE----------
+\section{Experience}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Intern, Software Technology Parks of India (STPI)}{May 2026 -- Jul 2026}
+    {Hospital ERP System}
+  \resumeItemListStart
+    \resumeItem{Developed the \textbf{Medical Tourism module} of a Hospital ERP system, covering how international patients are registered, managed and tracked inside the hospital management workflow.}
+    \resumeItem{Worked with the team to test the module and integrate it into the wider ERP so it worked with the existing hospital modules.}
+  \resumeItemListEnd
+
+  \resumeSubheading
+    {Freelance Developer, Financial Tracking App}{Nov 2025 -- Apr 2026}
+    {Backend, Architecture and AI Integration}
+  \resumeItemListStart
+    \resumeItem{Designed the overall \textbf{architecture} of the project and built the \textbf{entire backend} myself, owning the structure of the system from data handling to the APIs the app depends on.}
+    \resumeItem{Integrated the \textbf{AI features} of the app by connecting AI models to users' financial data, so the app could return smarter insights instead of plain records.}
+    \resumeItem{Managed the project end to end as a freelancer: requirements, design decisions, implementation and delivery.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+\vspace{-9pt}
+
+%----------PROJECTS----------
+\section{Projects}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {ETRIGAN: Local AI Workbench for Low-Spec Laptops}
+    {Python, Ollama, SQLite, WSL, CLI}
+  \resumeItemListStart
+    \resumeItem{Built a CLI-first workbench that makes local LLMs and agents practical on a laptop with only \textbf{4 GB VRAM and 7.8 GB RAM}, instead of assuming a cloud service or a high-end GPU.}
+    \resumeItem{Hardware-aware commands: \textbf{doctor} checks the GPU, RAM, disk and tooling, \textbf{bench} measures speed and memory per model, and \textbf{fit} recommends which models and quantizations suit the machine.}
+    \resumeItem{Memory-aware model router, hybrid retrieval (BM25 and vector search) that returns cited answers and refuses when evidence is weak, an offline code sandbox, and a hash-chained audit log that makes tampering detectable.}
+  \resumeItemListEnd
+
+  \resumeProjectHeading
+    {Voice-Enabled Indic RAG Pipeline}
+    {Python, FastAPI, Sentence-Transformers, Sarvam AI, ElevenLabs, faster-whisper}
+  \resumeItemListStart
+    \resumeItem{Built an end-to-end retrieval-augmented generation system for \textbf{Hindi and other Indic languages} on the AI4Bharat MSMARCO-XI dataset, served through FastAPI with a web dashboard.}
+    \resumeItem{Fine-tuned the \textbf{multilingual-e5-small} embedding model and implemented six chunking strategies, including Devanagari-aware splitting, combined with dense and BM25 retrieval.}
+    \resumeItem{Added pluggable speech services for live voice queries, a \textbf{four-tier guardrail system} that refuses low-confidence answers, and an error-recovery layer so the pipeline keeps running when a service fails.}
+  \resumeItemListEnd
+
+  \resumeProjectHeading
+    {Agentic Fraud Investigation System}
+    {TigerGraph, LangGraph, Google Gemini, Model Context Protocol (MCP), Streamlit, Python}
+  \resumeItemListStart
+    \resumeItem{Built an autonomous fraud investigator over a graph of about \textbf{590K transactions}, 14K cards and 9.7K device profiles stored in TigerGraph.}
+    \resumeItem{Designed an \textbf{8-stage LangGraph workflow} that investigates an alert, gathers evidence, assesses its own uncertainty, explains the findings and updates case memory, then recommends a policy action and drafts a Suspicious Activity Report.}
+    \resumeItem{Exposed graph traversals and GraphRAG as tools through a custom \textbf{MCP server}, ran the agent on 20 benchmark cases, and delivered a Streamlit dashboard for analysts.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+\vspace{-9pt}
+
+%----------TECHNICAL SKILLS----------
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.12in, label={}, topsep=2pt]
+  \small{\item{
+    \textbf{Languages}{: Python, C++, C, Java, Rust, Julia, Bash, SQL, GSQL} \\
+    \textbf{Frameworks \& Libraries}{: FastAPI, Uvicorn, LangGraph, LangChain, PyTorch, scikit-learn, NumPy, Pandas, Sentence-Transformers, Streamlit} \\
+    \textbf{Databases}{: PostgreSQL, MySQL, SQLite, TigerGraph} \\
+    \textbf{Tools \& DevOps}{: Git, GitHub, CI/CD, Docker, Ollama, Linux / WSL} \\
+    \textbf{Concepts}{: RAG, GraphRAG, Hybrid Retrieval, Agentic Workflows, Model Context Protocol (MCP), LLM Guardrails, Machine Learning, Model Evaluation}
+  }}
+\end{itemize}
+\vspace{-6pt}
+
+%----------CERTIFICATIONS----------
+\section{Certifications}
+\begin{itemize}[leftmargin=0.12in, label={}, topsep=2pt]
+  \small{\item{
+    \textbf{CS50x: Introduction to Computer Science, Harvard University (edX)} --- \textit{Topics: C, Python, SQL, HTML, CSS, JavaScript, Algorithms, Data Structures} \\
+    \textbf{NPTEL: Introduction to Machine Learning}
+  }}
+\end{itemize}
+
+\end{document}
